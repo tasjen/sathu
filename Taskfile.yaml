@@ -1,0 +1,12 @@
+version: '3'
+
+tasks:
+  dev:
+    cmds:
+      - docker compose -f docker-compose.dev.yaml up
+    env:
+      MY_UID:
+        sh: id -u
+      MY_GID:
+        sh: id -g
+    silent: true

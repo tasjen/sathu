@@ -1,0 +1,36 @@
+services:
+  api:
+    image: fz:api-dev
+    container_name: fz-api-dev
+    user: ${MY_UID}:${MY_GID} # to make the host be able to modify or delete files created in the container
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./api:/app
+    env_file:
+      - ./api/.env.dev
+    ports:
+      - 4000:4000
+
+  chatdb:
+    image: postgres:16-alpine
+    container_name: fz-db-dev
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+    volumes:
+      - ./db/dev/data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: fz-pgadmin-dev
+    environment:
+      PGADMIN_DEFAULT_EMAIL: dev@dev.com
+      PGADMIN_DEFAULT_PASSWORD: dev
+    attach: false
+    ports:
+      - 5050:80

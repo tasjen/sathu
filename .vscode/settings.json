@@ -1,0 +1,15 @@
+{
+  "editor.tabSize": 2,
+  "go.inlayHints.compositeLiteralFields": true,
+  "go.inlayHints.compositeLiteralTypes": true,
+  "go.inlayHints.functionTypeParameters": true,
+  "go.inlayHints.parameterNames": true,
+  "go.inlayHints.rangeVariableTypes": true,
+  "go.inlayHints.constantValues": true,
+  "gopls": {
+    "formatting.gofumpt": true,
+  },
+  "[go]": {
+    "editor.formatOnSave": true
+  }
+}
