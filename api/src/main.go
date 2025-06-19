@@ -96,37 +96,46 @@ func run() error {
 	}
 }
 
-// func newAuthDbClient(ctx context.Context) (*dynamodb.Client, error) {
-// 	awsConfig, err := config.LoadDefaultConfig(ctx)
-// 	if err != nil {
-// 		return &dynamodb.Client{}, err
+// package main
+
+// import (
+// 	"log"
+// 	"net/http"
+// 	"os"
+
+// 	"github.com/99designs/gqlgen/graphql/handler"
+// 	"github.com/99designs/gqlgen/graphql/handler/extension"
+// 	"github.com/99designs/gqlgen/graphql/handler/lru"
+// 	"github.com/99designs/gqlgen/graphql/handler/transport"
+// 	"github.com/99designs/gqlgen/graphql/playground"
+// 	"github.com/tasjen/fz/graph"
+// 	"github.com/vektah/gqlparser/v2/ast"
+// )
+
+// const defaultPort = "8080"
+
+// func main() {
+// 	port := os.Getenv("PORT")
+// 	if port == "" {
+// 		port = defaultPort
 // 	}
 
-// 	localAuthDbEndpoint := "http://authdb:8000"
-// 	// wait for authdb instance to spin up. 'depends_on' attribute in docker compose file doesn't work
-// 	if !*isProd {
-// 		client := &http.Client{}
-// 		for i := 0; i < 10; i++ {
-// 			resp, err := client.Get(localAuthDbEndpoint)
-// 			if err != nil {
-// 				if i == 9 {
-// 					return &dynamodb.Client{}, fmt.Errorf("cannot connect to local authdb: %v", err)
-// 				}
-// 				time.Sleep(time.Second)
-// 				continue
-// 			}
-// 			resp.Body.Close()
-// 			break
-// 		}
-// 	}
+// 	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
 
-// 	c := dynamodb.NewFromConfig(awsConfig,
-// 		func(o *dynamodb.Options) {
-// 			if !*isProd {
-// 				o.BaseEndpoint = aws.String(localAuthDbEndpoint)
-// 			}
-// 		},
-// 	)
+// 	srv.AddTransport(transport.Options{})
+// 	srv.AddTransport(transport.GET{})
+// 	srv.AddTransport(transport.POST{})
 
-// 	return c, nil
+// 	srv.SetQueryCache(lru.New[*ast.QueryDocument](1000))
+
+// 	srv.Use(extension.Introspection{})
+// 	srv.Use(extension.AutomaticPersistedQuery{
+// 		Cache: lru.New[string](100),
+// 	})
+
+// 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
+// 	http.Handle("/query", srv)
+
+// 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+// 	log.Fatal(http.ListenAndServe(":"+port, nil))
 // }
