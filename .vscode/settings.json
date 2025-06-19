@@ -7,7 +7,7 @@
   "go.inlayHints.rangeVariableTypes": true,
   "go.inlayHints.constantValues": true,
   "gopls": {
-    "formatting.gofumpt": true,
+    "formatting.gofumpt": true
   },
   "[go]": {
     "editor.formatOnSave": true
