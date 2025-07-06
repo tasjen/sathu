@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -15,23 +14,23 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/tasjen/fz/db"
+	"github.com/tasjen/fz/internal/routes"
 )
 
 var (
 	// isProd     = flag.Bool("prod", false, "is production mode")
 	httpPort    = flag.String("httpPort", os.Getenv("PORT"), "http port")
 	postgresURI = flag.String("postgresURI", os.Getenv("POSTGRESQL_URI"), "PostgresQL URI")
-	httpServer  *http.Server
 )
 
-type application struct {
-	logger *slog.Logger
-	db     *db.Queries
-}
+// type application struct {
+// 	logger *slog.Logger
+// }
 
 func main() {
 	if err := run(); err != nil {
 		log.Fatalf("%v: %v", err, string(debug.Stack()))
+		os.Exit(1)
 	} else {
 		log.Println("Server has been gracefully shutdown")
 	}
@@ -43,45 +42,32 @@ func run() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	app := &application{
-		logger: slog.New(slog.NewJSONHandler(os.Stdout, nil)),
-	}
-
 	pool, err := newPostgresClient(ctx)
 	if err != nil {
 		return err
 	}
 	defer pool.Close()
-	app.db = db.New(pool)
 
-	// queries := db.New(pool)
+	return startHttpServer(db.New(pool))
+}
 
-	// user, err := queries.GetUser(ctx, pgtype.UUID{Bytes: uuid.New(), Valid: true})
-	// if err != nil {
-	// 	return fmt.Errorf("failed to get user: %w", err)
-	// }
-	// log.Printf("User: %+v", user)
-
-	httpServer = &http.Server{
+func startHttpServer(db *db.Queries) error {
+	httpServer := &http.Server{
 		Addr:         fmt.Sprintf(":%s", *httpPort),
-		Handler:      app.routes(),
+		Handler:      routes.Routes(db),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
 
-	return startHttpServer()
-}
-
-func startHttpServer() error {
 	errCh := make(chan error)
 	// start http server
 	go func() {
+		log.Printf("HTTP server is running at :%s\n", httpServer.Addr)
 		if err := httpServer.ListenAndServe(); err != nil {
 			errCh <- err
 		}
 	}()
-	log.Printf("HTTP server is running at :%s", *httpPort)
 
 	// graceful shutdown
 	sigCh := make(chan os.Signal, 1)
