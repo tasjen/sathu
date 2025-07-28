@@ -3,13 +3,19 @@ package routes
 import (
 	"net/http"
 
-	"github.com/tasjen/fz/db"
-	"github.com/tasjen/fz/internal/handlers"
+	"github.com/tasjen/fz/api/internal/handlers"
 )
 
-func Routes(db *db.Queries) http.Handler {
-	mux := http.NewServeMux()
-	handlers := handlers.NewHandlers(db)
-	mux.HandleFunc("POST /users", handlers.CreateUserHandler)
-	return mux
+type Router struct {
+	handlers *handlers.Handlers
+}
+
+func NewRouter(handlers *handlers.Handlers) *Router {
+	return &Router{handlers: handlers}
+}
+
+func (r *Router) RegisterRoutes() http.Handler {
+	router := http.NewServeMux()
+	router.Handle("/users/", http.StripPrefix("/users", r.userRouter()))
+	return router
 }

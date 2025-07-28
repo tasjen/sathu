@@ -4,11 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/tasjen/fz/db"
+	"github.com/tasjen/fz/api/db"
 )
 
 // POST /users
-
 type NewUser struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -26,7 +25,6 @@ func (handlers *Handlers) CreateUserHandler(w http.ResponseWriter, r *http.Reque
 
 	err = handlers.db.CreateUser(r.Context(), db.CreateUserParams{
 		Username: p.Username,
-		Password: p.Password,
 		Email:    &p.Email,
 	})
 	if err != nil {

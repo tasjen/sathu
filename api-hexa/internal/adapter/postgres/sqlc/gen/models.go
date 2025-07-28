@@ -2,9 +2,10 @@
 // versions:
 //   sqlc v1.29.0
 
-package db
+package sqlc_gen
 
 import (
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -14,7 +15,7 @@ type StaffRole struct {
 }
 
 type Temple struct {
-	ID           pgtype.UUID
+	ID           uuid.UUID
 	NameTh       string
 	NameEn       string
 	Location     pgtype.Point
@@ -25,8 +26,8 @@ type Temple struct {
 }
 
 type TempleDonation struct {
-	ID             pgtype.UUID
-	TempleID       pgtype.UUID
+	ID             uuid.UUID
+	TempleID       uuid.UUID
 	UserID         pgtype.UUID
 	TempleEventID  pgtype.UUID
 	DonorName      *string
@@ -37,8 +38,8 @@ type TempleDonation struct {
 }
 
 type TempleEvent struct {
-	ID             pgtype.UUID
-	TempleID       pgtype.UUID
+	ID             uuid.UUID
+	TempleID       uuid.UUID
 	Title          string
 	Description    *string
 	EventStartDate pgtype.Date
@@ -46,31 +47,31 @@ type TempleEvent struct {
 }
 
 type TempleImage struct {
-	ID       pgtype.UUID
-	TempleID pgtype.UUID
+	ID       uuid.UUID
+	TempleID uuid.UUID
 	ImageUrl string
 	Caption  *string
 }
 
 type TempleMembership struct {
-	ID             pgtype.UUID
-	TempleID       pgtype.UUID
+	ID             uuid.UUID
+	TempleID       uuid.UUID
 	MemberName     string
 	MembershipDate pgtype.Date
 	MembershipType string
 }
 
 type TempleNews struct {
-	ID          pgtype.UUID
-	TempleID    pgtype.UUID
+	ID          uuid.UUID
+	TempleID    uuid.UUID
 	NewsTitle   string
 	NewsContent string
 	CreatedAt   pgtype.Timestamp
 }
 
 type TempleReview struct {
-	ID          pgtype.UUID
-	TempleID    pgtype.UUID
+	ID          uuid.UUID
+	TempleID    uuid.UUID
 	UserID      pgtype.UUID
 	Title       *string
 	Description *string
@@ -79,8 +80,8 @@ type TempleReview struct {
 }
 
 type TempleSponsorship struct {
-	ID                pgtype.UUID
-	TempleID          pgtype.UUID
+	ID                uuid.UUID
+	TempleID          uuid.UUID
 	SponsorName       string
 	SponsorshipAmount pgtype.Numeric
 	SponsorshipDate   pgtype.Date
@@ -88,8 +89,8 @@ type TempleSponsorship struct {
 }
 
 type TempleStaff struct {
-	ID          pgtype.UUID
-	TempleID    pgtype.UUID
+	ID          uuid.UUID
+	TempleID    uuid.UUID
 	UserID      pgtype.UUID
 	StaffName   string
 	RoleID      *int32
@@ -98,16 +99,16 @@ type TempleStaff struct {
 }
 
 type User struct {
-	ID              pgtype.UUID
+	ID              uuid.UUID
 	Username        string
 	Email           *string
 	IsEmailVerified *bool
-	ImageUrl        *string
+	Avatar          *string
 	CreatedAt       pgtype.Timestamp
 }
 
 type UserLinkedAccount struct {
-	UserID         pgtype.UUID
+	UserID         uuid.UUID
 	Provider       string
 	ProviderUserID string
 }
@@ -120,5 +121,5 @@ type UserSession struct {
 	RefreshTokenExpiresAt pgtype.Timestamp
 	CreatedAt             pgtype.Timestamp
 	LastUsedAt            pgtype.Timestamp
-	UserID                pgtype.UUID
+	UserID                uuid.UUID
 }

@@ -12,17 +12,16 @@ import (
 )
 
 const createUser = `-- name: CreateUser :exec
-INSERT INTO users (username, password, email) VALUES ($1, $2, $3)
+INSERT INTO users (username, email) VALUES ($1, $2) RETURNING id, username, email, is_email_verified, image_url, created_at
 `
 
 type CreateUserParams struct {
 	Username string
-	Password string
 	Email    *string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
-	_, err := q.db.Exec(ctx, createUser, arg.Username, arg.Password, arg.Email)
+	_, err := q.db.Exec(ctx, createUser, arg.Username, arg.Email)
 	return err
 }
 
@@ -43,6 +42,25 @@ func (q *Queries) GetTemple(ctx context.Context, id pgtype.UUID) (Temple, error)
 		&i.AddressEn,
 		&i.ContactPhone,
 		&i.FoundedOn,
+	)
+	return i, err
+}
+
+const getUserById = `-- name: GetUserById :one
+SELECT id, username, email, is_email_verified, image_url, created_at FROM users
+WHERE id = $1 LIMIT 1
+`
+
+func (q *Queries) GetUserById(ctx context.Context, id pgtype.UUID) (User, error) {
+	row := q.db.QueryRow(ctx, getUserById, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.IsEmailVerified,
+		&i.ImageUrl,
+		&i.CreatedAt,
 	)
 	return i, err
 }

@@ -5,7 +5,7 @@ CREATE TABLE users (
   username TEXT NOT NULL UNIQUE,
   email TEXT,
   is_email_verified BOOLEAN DEFAULT FALSE,
-  image_url TEXT,
+  avatar TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

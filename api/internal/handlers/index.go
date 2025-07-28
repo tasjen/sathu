@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/tasjen/fz/db"
+	"github.com/tasjen/fz/api/db"
 )
 
 type Handlers struct {

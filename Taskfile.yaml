@@ -23,5 +23,5 @@ tasks:
       - goose {{.CLI_ARGS}}
   sqlc:
     cmds:
-      - cd ./api && sqlc generate
+      - cd ./api-hexa/internal/adapter/postgres/sqlc && sqlc generate
     silent: true
