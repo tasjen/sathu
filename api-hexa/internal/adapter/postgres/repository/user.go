@@ -18,16 +18,15 @@ func NewUserRepository(db *postgres.DB) *UserRepository {
 }
 
 func (repo *UserRepository) CreateUser(ctx context.Context, user model.User) (model.User, error) {
-	param := sqlc_gen.CreateUserParams{
-		Username: user.Username,
-		Avatar:   user.Avatar,
-		Email:    user.Email,
+	param := sqlc_gen.CreateUserWithPasswordParams{
+		Email:        user.Email,
+		PasswordHash: user.Password,
 	}
-	id, err := repo.db.Queries.CreateUser(ctx, param)
+	id, err := repo.db.Queries.CreateUserWithPassword(ctx, param)
 	if err != nil {
 		pgErr, ok := postgres.ToPgError(err)
-		if ok && pgErr.Code == "23505" {
-			return model.User{}, errors.New("user already exists")
+		if ok && pgErr.ConstraintName == "email_unique" {
+			return model.User{}, errors.New("email already exists")
 		}
 		return model.User{}, err
 	}

@@ -6,6 +6,7 @@ import (
 
 	"github.com/tasjen/fz/api-hexa/internal/domain/model"
 	"github.com/tasjen/fz/api-hexa/internal/domain/port"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
@@ -16,15 +17,23 @@ func NewUserService(repo port.UserRepository) *UserService {
 	return &UserService{repo: repo}
 }
 
-func (s *UserService) RegisterUser(ctx context.Context, user model.User) error {
+func (s *UserService) RegisterUser(ctx context.Context, user model.User) (model.User, error) {
 	if err := validateUser(user); err != nil {
-		return err
+		return model.User{}, err
 	}
-	_, err := s.repo.CreateUser(ctx, user)
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(*user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return err
+		return model.User{}, err
 	}
-	return nil
+	hashedPasswordStr := string(hashedPassword)
+	user.Password = &hashedPasswordStr
+
+	createdUser, err := s.repo.CreateUser(ctx, user)
+	if err != nil {
+		return model.User{}, err
+	}
+	return createdUser, nil
 }
 
 func validateUser(user model.User) error {

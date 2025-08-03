@@ -5,111 +5,69 @@
 package sqlc_gen
 
 import (
+	"database/sql/driver"
+	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type StaffRole struct {
-	ID       int32
-	RoleName string
+type OauthProvider string
+
+const (
+	OauthProviderGoogle   OauthProvider = "google"
+	OauthProviderFacebook OauthProvider = "facebook"
+	OauthProviderGithub   OauthProvider = "github"
+)
+
+func (e *OauthProvider) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = OauthProvider(s)
+	case string:
+		*e = OauthProvider(s)
+	default:
+		return fmt.Errorf("unsupported scan type for OauthProvider: %T", src)
+	}
+	return nil
 }
 
-type Temple struct {
-	ID           uuid.UUID
-	NameTh       string
-	NameEn       string
-	Location     pgtype.Point
-	AddressTh    *string
-	AddressEn    *string
-	ContactPhone *string
-	FoundedOn    pgtype.Date
+type NullOauthProvider struct {
+	OauthProvider OauthProvider
+	Valid         bool // Valid is true if OauthProvider is not NULL
 }
 
-type TempleDonation struct {
-	ID             uuid.UUID
-	TempleID       uuid.UUID
-	UserID         pgtype.UUID
-	TempleEventID  pgtype.UUID
-	DonorName      *string
-	DonationAmount pgtype.Numeric
-	DonationDate   pgtype.Date
-	Purpose        *string
-	CreatedAt      pgtype.Timestamp
+// Scan implements the Scanner interface.
+func (ns *NullOauthProvider) Scan(value interface{}) error {
+	if value == nil {
+		ns.OauthProvider, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.OauthProvider.Scan(value)
 }
 
-type TempleEvent struct {
-	ID             uuid.UUID
-	TempleID       uuid.UUID
-	Title          string
-	Description    *string
-	EventStartDate pgtype.Date
-	EventEndDate   pgtype.Date
-}
-
-type TempleImage struct {
-	ID       uuid.UUID
-	TempleID uuid.UUID
-	ImageUrl string
-	Caption  *string
-}
-
-type TempleMembership struct {
-	ID             uuid.UUID
-	TempleID       uuid.UUID
-	MemberName     string
-	MembershipDate pgtype.Date
-	MembershipType string
-}
-
-type TempleNews struct {
-	ID          uuid.UUID
-	TempleID    uuid.UUID
-	NewsTitle   string
-	NewsContent string
-	CreatedAt   pgtype.Timestamp
-}
-
-type TempleReview struct {
-	ID          uuid.UUID
-	TempleID    uuid.UUID
-	UserID      pgtype.UUID
-	Title       *string
-	Description *string
-	Rating      *int32
-	CreatedAt   pgtype.Timestamp
-}
-
-type TempleSponsorship struct {
-	ID                uuid.UUID
-	TempleID          uuid.UUID
-	SponsorName       string
-	SponsorshipAmount pgtype.Numeric
-	SponsorshipDate   pgtype.Date
-	Purpose           *string
-}
-
-type TempleStaff struct {
-	ID          uuid.UUID
-	TempleID    uuid.UUID
-	UserID      pgtype.UUID
-	StaffName   string
-	RoleID      *int32
-	Position    string
-	ContactInfo *string
+// Value implements the driver Valuer interface.
+func (ns NullOauthProvider) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.OauthProvider), nil
 }
 
 type User struct {
 	ID              uuid.UUID
+	Email           string
 	Username        string
-	Email           *string
+	PasswordHash    *string
 	IsEmailVerified *bool
 	Avatar          *string
 	CreatedAt       pgtype.Timestamp
 }
 
-type UserLinkedAccount struct {
+type UserOauthAccount struct {
 	UserID         uuid.UUID
-	Provider       string
+	Provider       OauthProvider
 	ProviderUserID string
 }
 

@@ -18,9 +18,8 @@ func NewUserHandler(userService port.UserService) *UserHandler {
 
 // POST /users
 type registerRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
 	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 func (h *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
@@ -30,8 +29,9 @@ func (h *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	user, err := h.userService.RegisterUser(r.Context(), &model.User{
-		Username: newUser.Username,
+	_, err = h.userService.RegisterUser(r.Context(), model.User{
+		Email:    body.Email,
+		Password: &body.Password,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

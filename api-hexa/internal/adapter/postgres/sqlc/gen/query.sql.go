@@ -11,25 +11,24 @@ import (
 	"github.com/google/uuid"
 )
 
-const createUser = `-- name: CreateUser :one
-INSERT INTO users (username, avatar, email) VALUES ($1, $2, $3) RETURNING id
+const createUserWithPassword = `-- name: CreateUserWithPassword :one
+INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id
 `
 
-type CreateUserParams struct {
-	Username string
-	Avatar   *string
-	Email    *string
+type CreateUserWithPasswordParams struct {
+	Email        string
+	PasswordHash *string
 }
 
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (uuid.UUID, error) {
-	row := q.db.QueryRow(ctx, createUser, arg.Username, arg.Avatar, arg.Email)
+func (q *Queries) CreateUserWithPassword(ctx context.Context, arg CreateUserWithPasswordParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, createUserWithPassword, arg.Email, arg.PasswordHash)
 	var id uuid.UUID
 	err := row.Scan(&id)
 	return id, err
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, username, email, is_email_verified, avatar, created_at FROM users
+SELECT id, email, username, password_hash, is_email_verified, avatar, created_at FROM users
 WHERE id = $1 LIMIT 1
 `
 
@@ -38,8 +37,9 @@ func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (User, error) {
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.Username,
 		&i.Email,
+		&i.Username,
+		&i.PasswordHash,
 		&i.IsEmailVerified,
 		&i.Avatar,
 		&i.CreatedAt,
