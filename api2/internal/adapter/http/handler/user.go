@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/tasjen/fz/api-hexa/internal/domain/model"
-	"github.com/tasjen/fz/api-hexa/internal/domain/port"
+	"github.com/tasjen/sathu/api-hexa/internal/domain/model"
+	"github.com/tasjen/sathu/api-hexa/internal/domain/port"
 )
 
 type UserHandler struct {

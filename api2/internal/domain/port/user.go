@@ -5,7 +5,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/tasjen/fz/api-hexa/internal/domain/model"
+	"github.com/tasjen/sathu/api-hexa/internal/domain/model"
 )
 
 // Driving Port: UserService defines the methods that the application layer will use to interact with user-related operations.

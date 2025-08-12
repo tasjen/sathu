@@ -1,7 +1,7 @@
 services:
   api:
-    image: fz:api-dev
-    container_name: fz-api-dev
+    image: sathu:api-dev
+    container_name: sathu-api-dev
     user: ${MY_UID}:${MY_GID} # to make the host be able to modify or delete files created in the container
     build:
       context: ./api
@@ -15,7 +15,7 @@ services:
 
   chatdb:
     image: postgres:17-alpine
-    container_name: fz-db-dev
+    container_name: sathu-db-dev
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: dev
@@ -27,7 +27,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: fz-pgadmin-dev
+    container_name: sathu-pgadmin-dev
     environment:
       PGADMIN_DEFAULT_EMAIL: dev@dev.com
       PGADMIN_DEFAULT_PASSWORD: dev

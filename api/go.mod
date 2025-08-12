@@ -1,4 +1,4 @@
-module github.com/tasjen/fz/api
+module github.com/tasjen/sathu/api
 
 go 1.24.0
 

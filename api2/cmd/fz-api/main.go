@@ -13,8 +13,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/tasjen/fz/api/db"
-	// "github.com/tasjen/fz/api/db"
+	"github.com/tasjen/sathu/api/db"
 )
 
 var (

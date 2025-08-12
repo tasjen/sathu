@@ -6,8 +6,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/tasjen/fz/api-hexa/internal/adapter/config"
-	sqlc_gen "github.com/tasjen/fz/api-hexa/internal/adapter/postgres/sqlc/gen"
+	"github.com/tasjen/sathu/api-hexa/internal/adapter/config"
+	sqlc_gen "github.com/tasjen/sathu/api-hexa/internal/adapter/postgres/sqlc/gen"
 )
 
 type DB struct {

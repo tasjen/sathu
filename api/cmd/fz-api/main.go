@@ -13,9 +13,9 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/tasjen/fz/api/db"
-	"github.com/tasjen/fz/api/internal/handlers"
-	"github.com/tasjen/fz/api/internal/routes"
+	"github.com/tasjen/sathu/api/db"
+	"github.com/tasjen/sathu/api/internal/handlers"
+	"github.com/tasjen/sathu/api/internal/routes"
 )
 
 var (

@@ -1,4 +1,4 @@
-module github.com/tasjen/fz/api-hexa
+module github.com/tasjen/sathu/api-hexa
 
 go 1.24.4
 

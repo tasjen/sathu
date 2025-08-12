@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/tasjen/fz/api-hexa/internal/domain/model"
-	"github.com/tasjen/fz/api-hexa/internal/domain/port"
+	"github.com/tasjen/sathu/api-hexa/internal/domain/model"
+	"github.com/tasjen/sathu/api-hexa/internal/domain/port"
 	"golang.org/x/crypto/bcrypt"
 )
 

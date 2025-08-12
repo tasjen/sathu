@@ -3,8 +3,8 @@ package http
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/tasjen/fz/api-hexa/internal/adapter/config"
-	"github.com/tasjen/fz/api-hexa/internal/adapter/http/handler"
+	"github.com/tasjen/sathu/api-hexa/internal/adapter/config"
+	"github.com/tasjen/sathu/api-hexa/internal/adapter/http/handler"
 )
 
 type Router struct {

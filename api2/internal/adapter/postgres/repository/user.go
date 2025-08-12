@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/tasjen/fz/api-hexa/internal/adapter/postgres"
-	sqlc_gen "github.com/tasjen/fz/api-hexa/internal/adapter/postgres/sqlc/gen"
-	"github.com/tasjen/fz/api-hexa/internal/domain/model"
+	"github.com/tasjen/sathu/api-hexa/internal/adapter/postgres"
+	sqlc_gen "github.com/tasjen/sathu/api-hexa/internal/adapter/postgres/sqlc/gen"
+	"github.com/tasjen/sathu/api-hexa/internal/domain/model"
 )
 
 type UserRepository struct {
