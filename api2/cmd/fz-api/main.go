@@ -48,7 +48,40 @@ func run() error {
 	}
 	defer pool.Close()
 
-	return startHttpServer(db.New(pool))
+	userRepo := db.NewUserRepository(pool)
+	userService := db.NewUserService(userRepo)
+	userHandler := db.NewUserHandler(userService)
+	router, err := db.NewRouter(&db.Config{}, userHandler)
+	if err != nil {
+		return err
+	}
+
+	errCh := make(chan error)
+	// start http server
+	go func() {
+		log.Printf("HTTP server is running at :%s\n", router.Addr)
+		if err := router.Serve(); err != nil {
+			errCh <- err
+		}
+	}()
+
+	// graceful shutdown
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(
+		sigCh, os.Interrupt, syscall.SIGINT, syscall.SIGTERM,
+	)
+	defer signal.Stop(sigCh)
+
+	select {
+	case err := <-errCh:
+		return err
+	case sig := <-sigCh:
+		log.Printf("signal '%v' detected, server is being shutdown", sig)
+		if err := httpServer.Shutdown(context.Background()); err != nil {
+			return err
+		}
+		return nil
+	}
 }
 
 func startHttpServer(db *db.Queries) error {

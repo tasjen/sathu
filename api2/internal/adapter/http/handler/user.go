@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/tasjen/fz/api-hexa/internal/domain/model"
 	"github.com/tasjen/fz/api-hexa/internal/domain/port"
 )
@@ -22,20 +22,21 @@ type registerRequest struct {
 	Password string `json:"password"`
 }
 
-func (h *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
+func (h *UserHandler) Register(c *gin.Context) {
 	var body registerRequest
-	err := json.NewDecoder(r.Body).Decode(&body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	_, err = h.userService.RegisterUser(r.Context(), model.User{
+
+	_, err := h.userService.RegisterUser(c.Request.Context(), model.User{
 		Email:    body.Email,
 		Password: &body.Password,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
+
+	c.Status(http.StatusCreated)
 }
